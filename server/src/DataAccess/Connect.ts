@@ -1,6 +1,7 @@
 import * as mongo from 'mongodb';
 import dotenv from 'dotenv';
 import User from '../Models/User.js';
+import { Project } from '../Models/Project.js';
 
 async function ConnectToMongo() {
     dotenv.config();
@@ -19,5 +20,5 @@ async function GetCollection<T extends mongo.BSON.Document>(databaseName: string
 }
 
 const userCollection = GetCollection<User>('Auth', 'Users');
-
-export { userCollection };
+const projectCollection = GetCollection<Project>('ProjectManager', 'Projects');
+export { userCollection, projectCollection };

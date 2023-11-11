@@ -4,24 +4,31 @@ import User from '../Models/User.js';
 
 const router = Router();
 
-router.get('/', async (req, resp) => {
+router.get('/', async (_, res) => {
     try {
         const users = await GetAllUsers();
-        resp.json(users);
+        res.json(users);
     }
     catch (err) {
         console.error(err);
+        res.status(500).send('Internal Server Error');
     }
 });
 
 router.post('/', async (req, res) => {
     const user = new User(req.body);
+    if (!user.email) {
+        res.status(400).send('User must have an email.');
+        return;
+    }
+
     try {
         const result = await CreateUser(user);
         res.json(result);
     }
     catch (err) {
         console.error(err);
+        res.status(500).send('Internal Server Error');
     }
 });
 
@@ -38,6 +45,7 @@ router.get('/:id', async (req, res) => {
     }
     catch (err) {
         console.error(err);
+        res.status(500).send('Internal Server Error');
     }
 });
 
