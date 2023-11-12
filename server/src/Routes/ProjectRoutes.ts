@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { GetAllProjects, CreateProject, GetProjectById, UpdateProject } from '../DataAccess/Commands.js';
-import { Project, Task } from '../Models/Project.js';
+import { Project } from '../Models/Project.js';
 
 const router = Router();
 

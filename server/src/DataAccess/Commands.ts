@@ -1,7 +1,9 @@
-import { userCollection, projectCollection } from "./Connect.js";
+import { userCollection, projectCollection, authCollection } from "./Connect.js";
 import User from '../Models/User.js';
-import { Project, Task } from '../Models/Project.js';
+import { Project } from '../Models/Project.js';
 import { ObjectId } from "mongodb";
+import { hash } from 'bcrypt';
+import Auth from "../Models/Auth.js";
 
 /****************************
  *      User Commands       *
@@ -69,4 +71,29 @@ export async function CreateProject(project: Project) {
 export async function UpdateProject(id: string, project: Project) {
     const expression = { _id: new ObjectId(id) };
     return (await projectCollection).updateOne(expression, { $set: project });
+}
+
+/****************************
+ *      Auth Commands       *
+ ****************************/
+export async function GetAuthById(id: string) {
+    return (await authCollection).findOne({ _id: new ObjectId(id) });
+}
+
+export async function GetAuthByEmailPass(email: string, password: string) {
+    const passwordHash = await hash(password, 10);
+    return (await authCollection).findOne({ email: email, password: passwordHash });
+}
+
+export async function CreateUserAuth(auth: Auth) {
+    const passwordHash = await hash(auth.password, 10);
+    const authUser = new Auth({ ...auth, id: auth._id.toString(), password: passwordHash });
+    return (await authCollection).insertOne(authUser);
+}
+
+export async function UpdateAuthToken(id: string, token: string) {
+    const expression = { _id: new ObjectId(id) };
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getMonth() + 1);
+    return (await authCollection).updateOne(expression, { $set: { access_token: token, access_token_expiration: expirationDate } });
 }
