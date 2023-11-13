@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import { GetAllUsers, CreateUser, GetUserById } from '../DataAccess/Commands.js';
 import User from '../Models/User.js';
+import { auth } from '../Services/JWT.js';
 
 const router = Router();
+router.use(auth);
 
 router.get('/', async (_, res) => {
     try {

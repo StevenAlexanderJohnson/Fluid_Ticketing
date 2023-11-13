@@ -2,7 +2,7 @@ import { userCollection, projectCollection, authCollection } from "./Connect.js"
 import User from '../Models/User.js';
 import { Project } from '../Models/Project.js';
 import { ObjectId } from "mongodb";
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import Auth from "../Models/Auth.js";
 
 /****************************
@@ -76,13 +76,20 @@ export async function UpdateProject(id: string, project: Project) {
 /****************************
  *      Auth Commands       *
  ****************************/
-export async function GetAuthById(id: string) {
-    return (await authCollection).findOne({ _id: new ObjectId(id) });
+export async function GetAuthById(id: ObjectId) {
+    return (await authCollection).findOne({ _id: id });
 }
 
 export async function GetAuthByEmailPass(email: string, password: string) {
-    const passwordHash = await hash(password, 10);
-    return (await authCollection).findOne({ email: email, password: passwordHash });
+    const user = await (await authCollection).findOne({ email: email });
+    if (!user) {
+        return null;
+    }
+
+    if (!await compare(password, user.password)) {
+        return null
+    }
+    return user;
 }
 
 export async function CreateUserAuth(auth: Auth) {

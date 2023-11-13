@@ -1,11 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { expressjwt } from 'express-jwt';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 // Import the routes from other files.
-import baseRoutes from './Routes/BaseRoutes.js';
 import userRoutes from './Routes/UserRoutes.js';
 import authRouter from './Routes/AuthRoutes.js';
+import { auth } from './Services/JWT.js';
 
 // Get the JWT secret from the environment variables.
 if (process.env.NODE_ENV === 'production') {
@@ -24,23 +24,7 @@ const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
-
-app.use(
-    expressjwt({
-        secret: jwtSecret,
-        algorithms: ['HS256']
-    })
-        .unless({
-            path: [
-                '/api/auth/login',
-                '/api/auth/register',
-                '/api/auth/refresh',
-                '/api/auth/logout'
-            ]
-        })
-)
-
-app.use("/", baseRoutes);
+app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRoutes);
 

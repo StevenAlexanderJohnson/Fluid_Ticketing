@@ -2,8 +2,8 @@ import { BSON } from "mongodb";
 import User, { UserInterface } from "./User.js";
 
 interface AuthInterface extends UserInterface {
-    access_token: string;
-    access_token_expiration: Date;
+    access_token?: string | null;
+    access_token_expiration?: Date;
 }
 
 export default class Auth extends User implements BSON.Document {
