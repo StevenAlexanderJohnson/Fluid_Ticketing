@@ -2,7 +2,7 @@ import { userCollection, projectCollection, authCollection } from "./Connect.js"
 import User from '../Models/User.js';
 import { Project } from '../Models/Project.js';
 import { ObjectId } from "mongodb";
-import { compare, hash } from 'bcrypt';
+import { HashPassword, ComparePassword } from "../Services/PasswordHasher.js";
 import Auth from "../Models/Auth.js";
 
 /****************************
@@ -14,7 +14,10 @@ import Auth from "../Models/Auth.js";
  * @returns Array of User objects from the database.
  */
 export async function GetAllUsers() {
-    return (await userCollection).find().toArray();
+    const collection = await userCollection;
+    const output = await collection.find().toArray();
+
+    return output;
 }
 
 /**
@@ -24,6 +27,7 @@ export async function GetAllUsers() {
  */
 export async function GetUserById(id: string) {
     let expression = {};
+    const collection = await userCollection;
 
     try {
         expression = { _id: new ObjectId(id) };
@@ -32,7 +36,7 @@ export async function GetUserById(id: string) {
         expression = { email: id };
     }
 
-    return (await userCollection).findOne(expression);
+    return await collection.findOne(expression);
 }
 
 /**
@@ -41,18 +45,21 @@ export async function GetUserById(id: string) {
  * @returns Response from the database after insertion.
  */
 export async function CreateUser(user: User) {
-    return (await userCollection).insertOne(user);
+    const collection = await userCollection;
+    return await collection.insertOne(user);
 }
 
 /****************************
  *     Project Commands     *
  * **************************/
 export async function GetAllProjects() {
-    return (await projectCollection).find().toArray();
+    const collection = await projectCollection;
+    return collection.find().toArray();
 }
 
 export async function GetProjectById(id: string) {
     let expression = {};
+    const collection = await projectCollection;
 
     try {
         expression = { _id: new ObjectId(id) };
@@ -61,46 +68,52 @@ export async function GetProjectById(id: string) {
         expression = { name: id };
     }
 
-    return (await projectCollection).findOne(expression);
+    return await collection.findOne(expression);
 }
 
 export async function CreateProject(project: Project) {
-    return (await projectCollection).insertOne(project);
+    const collection = await projectCollection;
+    return await collection.insertOne(project);
 }
 
 export async function UpdateProject(id: string, project: Project) {
     const expression = { _id: new ObjectId(id) };
-    return (await projectCollection).updateOne(expression, { $set: project });
+    const collection = await projectCollection;
+    return await collection.updateOne(expression, { $set: project });
 }
 
 /****************************
  *      Auth Commands       *
  ****************************/
 export async function GetAuthById(id: ObjectId) {
-    return (await authCollection).findOne({ _id: id });
+    const collection = await authCollection;
+    return await collection.findOne({ _id: id });
 }
 
 export async function GetAuthByEmailPass(email: string, password: string) {
-    const user = await (await authCollection).findOne({ email: email });
+    const collection = await authCollection;
+    const user = await collection.findOne({ email: email });
     if (!user) {
         return null;
     }
 
-    if (!await compare(password, user.password)) {
+    if (!await ComparePassword(password, user.password)) {
         return null
     }
     return user;
 }
 
 export async function CreateUserAuth(auth: Auth) {
-    const passwordHash = await hash(auth.password, 10);
+    const collection = await authCollection;
+    const passwordHash = await HashPassword(auth.password);
     const authUser = new Auth({ ...auth, id: auth._id.toString(), password: passwordHash });
-    return (await authCollection).insertOne(authUser);
+    return await collection.insertOne(authUser);
 }
 
 export async function UpdateAuthToken(id: string, token: string) {
+    const collection = await authCollection;
     const expression = { _id: new ObjectId(id) };
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getMonth() + 1);
-    return (await authCollection).updateOne(expression, { $set: { access_token: token, access_token_expiration: expirationDate } });
+    return await collection.updateOne(expression, { $set: { access_token: token, access_token_expiration: expirationDate } });
 }

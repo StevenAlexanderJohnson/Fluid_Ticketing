@@ -4,12 +4,10 @@ import User from '../Models/User.js';
 import { auth } from '../Services/JWT.js';
 
 const router = Router();
-router.use(auth);
 
 router.get('/', async (_, res) => {
     try {
-        const users = await GetAllUsers();
-        res.json(users);
+        res.json(await GetAllUsers());
     }
     catch (err) {
         console.error(err);

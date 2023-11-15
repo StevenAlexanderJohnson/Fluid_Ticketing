@@ -5,7 +5,6 @@ import cookieParser from 'cookie-parser';
 // Import the routes from other files.
 import userRoutes from './Routes/UserRoutes.js';
 import authRouter from './Routes/AuthRoutes.js';
-import { auth } from './Services/JWT.js';
 
 // Get the JWT secret from the environment variables.
 if (process.env.NODE_ENV === 'production') {

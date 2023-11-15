@@ -2,14 +2,8 @@ import { Router } from 'express';
 import { Request, Response } from 'express';
 import Auth from '../Models/Auth.js';
 import { CreateUserAuth, GetAuthByEmailPass } from '../DataAccess/Commands.js';
-import { AuthPayload, CustomRequest, GenerateJWT, RefreshJWT, auth } from '../Services/JWT.js';
-import { decode } from 'jsonwebtoken';
+import { GenerateJWT, RefreshJWT } from '../Services/JWT.js';
 import { ObjectId } from 'mongodb';
-
-const jwtSecret = process.env.JWT_SECRET;
-if (!jwtSecret) {
-    throw new Error('JWT_SECRET is not defined');
-}
 
 const router = Router();
 
@@ -18,7 +12,7 @@ router.post('/login', async (req, res) => {
         const authUser = new Auth(req.body);
         const user = await GetAuthByEmailPass(authUser.email, authUser.password);
         if (!user) {
-            return res.status(401).send('Unauthorized');
+            return res.status(401).send('Invalid Username and Password');
         }
 
         res.json(await GenerateJWT(authUser));
@@ -81,7 +75,6 @@ router.post(
                 .json({ token: token.token, redirect: redirect });
         }
         catch (err) {
-            console.log(err);
             return res.status(500).send('Internal Server Error');
         }
     });

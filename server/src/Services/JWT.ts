@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import Auth from '../Models/Auth.js';
 import { GetAuthById, UpdateAuthToken } from '../DataAccess/Commands.js';
-import { ObjectId } from 'mongodb';
 
 const jwtSecret = process.env.JWT_SECRET;
 if (!jwtSecret) {

@@ -17,13 +17,11 @@ async function ConnectToMongo() {
     const uri = process.env.MONGODB_URI;
     if (!uri) throw new Error('MONGODB_URI is not defined');
 
-    const client = await new mongo.MongoClient(uri).connect();
-
-    return client;
+    return await new mongo.MongoClient(uri).connect();
 }
 
 async function GetCollection<T extends mongo.BSON.Document>(databaseName: string, collectionName: string): Promise<mongo.Collection<T>> {
-    const client = await ConnectToMongo();
+    const client = await ConnectToMongo().catch(err => { throw err; });
     return client.db(databaseName).collection<T>(collectionName);
 }
 
