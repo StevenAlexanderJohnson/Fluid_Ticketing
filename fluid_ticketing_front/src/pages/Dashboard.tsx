@@ -30,6 +30,18 @@ export default function Dashboard() {
             },
         ]
     });
+    const chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'right' as const,
+            },
+            title: {
+                display: true,
+                text: 'Tickets over time'
+            },
+        },
+    };
     useEffect(() => {
         let data = chartData;
         data.datasets[0].data = [1, 2];
@@ -42,7 +54,9 @@ export default function Dashboard() {
             <LightDashboardCell title='Days until next Sprint' value={1} comparedValue={3} />
             <LightDashboardCell title="Tickets this Sprint" value={1} comparedValue={3} />
             <div className="bg-secondary-light30 dark:bg-background-light03 rounded-2xl row-span-2 md:col-span-2 flex justify-center items-center p-5">
-                {chartData ? <Doughnut data={chartData} /> : null}
+                <div className='w-full h-full'>
+                    {chartData ? <Doughnut data={chartData} options={chartOptions} /> : null}
+                </div>
             </div>
             <div className="bg-secondary-light30 dark:bg-background-light03 rounded-2xl md:col-span-2 row-span-2">
                 <h2>Recent Activity</h2>

@@ -6,12 +6,11 @@ import chart from '../assets/chart.svg';
 import trending from '../assets/trending.svg';
 import '../App.css'
 import { Outlet } from 'react-router-dom'
-
 import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-nav gap-4 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-nav gap-4 h-full max-w-7xl mx-auto p-5">
       <div className="hidden bg-background-dark03 dark:bg-background-light03 rounded-xl py-10 px-5 md:flex flex-col gap-10">
         <div className='flex flex-row justify-around items-center mb-10'>
           <img src={user_icon} alt="user icon" className="w-12 h-auto dark:invert" />
