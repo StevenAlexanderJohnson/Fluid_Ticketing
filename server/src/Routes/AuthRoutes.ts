@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(401).send('Invalid Username and Password');
         }
-
+        authUser._id = user._id;
         res.json(await GenerateJWT(authUser));
     }
     catch (err) {

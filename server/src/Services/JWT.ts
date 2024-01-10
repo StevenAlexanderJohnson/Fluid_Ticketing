@@ -21,7 +21,7 @@ export interface AuthPayload {
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const authHeader = req.header('Authorization')
+        const authHeader = req.header('Authorization');
         if (!authHeader) {
             res.status(401).send('Unauthorized');
             return;
@@ -48,7 +48,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
                 access_token_expiration: new Date(),
                 name: ''
             });
-
             next();
         });
     }
