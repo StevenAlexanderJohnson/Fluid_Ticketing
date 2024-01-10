@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { GetAllProjects, CreateProject, GetProjectById, UpdateProject } from '../DataAccess/Commands.js';
-import { Project } from '../Models/Project.js';
+import { GetAllTickets, CreateTicket, GetTicketById, UpdateTicket, GetProjectById } from '../DataAccess/Commands.js';
+import { Ticket } from '../Models/Ticket.js';
 import { auth } from '../Services/JWT.js';
 
 const router = Router();
@@ -8,8 +8,8 @@ router.use(auth);
 
 router.get('/', async (_, res) => {
     try {
-        const projects = await GetAllProjects();
-        res.json(projects);
+        const tickets = await GetAllTickets();
+        res.json(tickets);
     }
     catch (err) {
         console.error(err);
@@ -18,15 +18,25 @@ router.get('/', async (_, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const project = new Project(req.body);
+    const ticket = new Ticket(req.body);
     // Make sure that either the id or name is set
-    if (!project.name) {
-        res.status(400).send('Project must have a name.');
+    if (!ticket.name) {
+        res.status(400).send('Ticket must have a name.');
+        return;
+    }
+
+    if (!ticket.projectId) {
+        res.status(400).send('Ticket must have a projectId.');
         return;
     }
 
     try {
-        const result = await CreateProject(project);
+        const project = await GetProjectById(ticket.projectId.toString());
+        if (!project) {
+            res.status(404).send('Project not found');
+            return;
+        }
+        const result = await CreateTicket(ticket);
         res.json(result);
     }
     catch (err) {
@@ -36,12 +46,12 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const projectId = req.params.id;
+    const ticketId = req.params.id;
 
     try {
-        const result = await GetProjectById(projectId);
+        const result = await GetTicketById(ticketId);
         if (!result) {
-            res.status(404).send('Project not found');
+            res.status(404).send('Ticket not found');
             return;
         }
         res.json(result);
@@ -53,11 +63,11 @@ router.get('/:id', async (req, res) => {
 });
 
 router.patch('/:id', async (req, res) => {
-    const projectId = req.params.id;
-    const project = new Project(req.body);
+    const ticketId = req.params.id;
+    const ticket = new Ticket(req.body);
 
     try {
-        const result = await UpdateProject(projectId, project);
+        const result = await UpdateTicket(ticketId, ticket);
         res.json(result);
     }
     catch (err) {

@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser';
 // Import the routes from other files.
 import userRoutes from './Routes/UserRoutes.js';
 import authRouter from './Routes/AuthRoutes.js';
+import projectRouter from './Routes/ProjectRoutes.js';
+import ticketRouter from './Routes/TicketRoutes.js';
 
 // Get the JWT secret from the environment variables.
 if (process.env.NODE_ENV === 'production') {
@@ -26,6 +28,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRoutes);
+app.use('/api/project', projectRouter);
+app.use('/api/ticket', ticketRouter);
 
 app.listen(port, () =>
     console.log(`Example app listening at http://localhost:${port}`)

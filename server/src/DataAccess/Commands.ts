@@ -1,9 +1,10 @@
-import { userCollection, projectCollection, authCollection } from "./Connect.js";
+import { userCollection, projectCollection, authCollection, ticketCollection } from "./Connect.js";
 import User from '../Models/User.js';
 import { Project } from '../Models/Project.js';
 import { ObjectId } from "mongodb";
 import { HashPassword, ComparePassword } from "../Services/PasswordHasher.js";
 import Auth from "../Models/Auth.js";
+import { Ticket } from "../Models/Ticket.js";
 
 /****************************
  *      User Commands       *
@@ -80,6 +81,47 @@ export async function UpdateProject(id: string, project: Project) {
     const expression = { _id: new ObjectId(id) };
     const collection = await projectCollection;
     return await collection.updateOne(expression, { $set: project });
+}
+
+/****************************
+ *      Ticket Commands     *
+ ****************************/
+export async function GetAllTickets() {
+    const collection = await ticketCollection;
+    return collection.find().toArray();
+}
+
+export async function GetTicketById(id: string) {
+    let expression = {};
+    const collection = await ticketCollection;
+
+    try {
+        expression = { _id: new ObjectId(id) };
+    }
+    catch (err) {
+        expression = { name: id };
+    }
+
+    return await collection.findOne(expression);
+}
+
+export async function CreateTicket(ticket: Ticket) {
+    const collection = await ticketCollection;
+    const output = await collection.insertOne(ticket);
+
+    const projectExpression = { _id: new ObjectId(ticket.projectId) };
+    const pCollection = await projectCollection;
+    let project = await pCollection.findOne(projectExpression);
+    // No need to check if project exists becuase we did that in the route.
+    await pCollection.updateOne(projectExpression, { $set: { tasks: [...project!.tasks, new ObjectId(output.insertedId)]} });
+
+    return output;
+}
+
+export async function UpdateTicket(id: string, ticket: Ticket) {
+    const expression = { _id: new ObjectId(id) };
+    const collection = await ticketCollection;
+    collection.updateOne(expression, { $set: ticket });
 }
 
 /****************************
