@@ -11,6 +11,7 @@ export default function Tickets() {
     const [typeFilter, setTypeFilter] = useState('bug');
     const [asigneeOptions, setAssigneeOptions] = useState<asignee_option[]>([])
     const [assigneeFilter, setAssigneeFilter] = useState('all');
+    const [descriptionFilter, setDescriptionFilter] = useState('');
     const [tickets, setTickets] = useState<ticket[]>([])
 
     useEffect(() => {
@@ -54,7 +55,7 @@ export default function Tickets() {
             <div className='flex flex-row justify-center items-center gap-3 pb-5 flex-wrap'>
                 <label htmlFor="status_filter" className='text-2xl'>
                     Status:
-                    <select name="status_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setStatusFilter(e.target.value.toLowerCase())}>
+                    <select name="status_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setStatusFilter(e.target.value)}>
                         <option>Open</option>
                         <option>Closed</option>
                         <option>In Progress</option>
@@ -63,7 +64,7 @@ export default function Tickets() {
                 </label>
                 <label htmlFor='type_filter' className='text-2xl'>
                     Type:
-                    <select name="type_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setTypeFilter(e.target.value.toLowerCase())}>
+                    <select name="type_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setTypeFilter(e.target.value)}>
                         <option>Bug</option>
                         <option>Feature</option>
                         <option>Task</option>
@@ -73,13 +74,13 @@ export default function Tickets() {
                 </label>
                 <label htmlFor='assignee_filter' className='text-2xl'>
                     Assignee:
-                    <select name="assignee_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setAssigneeFilter(e.target.value.toLowerCase())}>
+                    <select name="assignee_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setAssigneeFilter(e.target.value)}>
                         <option selected>All</option>
                         <option>Me</option>
                         {asigneeOptions.map((option) => <option key={option.id}>{option.name}</option>)}
                     </select>
                 </label>
-                <input type="text" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2 flex-grow' placeholder='Search Descriptions'></input>
+                <input type="text" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2 flex-grow' placeholder='Search Descriptions' onChange={(e) => setDescriptionFilter(e.target.value)} />
             </div>
             <div className="flex-grow flex flex-col gap-10 border-accent-light dark:border-accent-dark border-2 rounded-2xl p-10">
                 {tickets
@@ -87,7 +88,10 @@ export default function Tickets() {
                         if (statusFilter === 'all') {
                             return true;
                         }
-                        return x.status === statusFilter && x.type === typeFilter && (assigneeFilter === 'all' || x.assignee_name.toLowerCase() === assigneeFilter);
+                        return x.status.toLowerCase() === statusFilter.toLowerCase()
+                            && x.type.toLowerCase() === typeFilter.toLowerCase()
+                            && (assigneeFilter === 'all' || x.assignee_name.toLowerCase() === assigneeFilter.toLowerCase())
+                            && x.description.toLowerCase().includes(descriptionFilter.toLowerCase());
                     })
                     .map((ticket) => <TicketPreview key={ticket.id} {...ticket} />)}
             </div>

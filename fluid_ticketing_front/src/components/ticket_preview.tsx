@@ -13,7 +13,7 @@ export interface ticket {
 
 export default function TicketPreview(prop: ticket) {
     return (
-        <a href={`/tickets/${prop.id}`} className="bg-secondary-light dark:bg-secondary-dark rounded-2xl">
+        <a href={`/tickets/${prop.id}`} className="bg-primary-light dark:bg-primary-dark rounded-2xl text-text-light">
             <h2 className="text-2xl">{prop.title}</h2>
             <p className="text-sm">{prop.description}</p>
             <p className="text-sm">{prop.type}</p>
