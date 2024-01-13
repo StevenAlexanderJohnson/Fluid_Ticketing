@@ -3,8 +3,6 @@ import {
     CategoryScale,
     LinearScale,
     BarElement,
-    Title,
-    Tooltip,
     Legend
 } from "chart.js";
 import { Bar } from 'react-chartjs-2';
@@ -75,9 +73,13 @@ export default function LandingPage() {
                 <div>
                     <h1 className="text-6xl font-bold text-center">Fluid Ticketing</h1>
                     <p className="text-center text-2xl font-bold py-10">The most flexable ticketing system out there.</p>
-                    <Link to='/login' className="bg-accent-light dark:bg-accent-dark text-text-light rounded-2xl p-5 text-center text-2xl font-bold">Get Started</Link>
+                    <Link to='/login' className="bg-accent-light dark:bg-accent-dark text-text-light rounded-2xl p-5 text-center text-2xl font-bold">
+                        Get Started
+                    </Link>
                 </div>
+                <div className="shadow-2xl shadow-accent-light dark:shadow-accent-dark rounded-2xl">
                     <Dashboard />
+                </div>
             </div>
             <div className="min-h-full grid grid-cols-1 lg:grid-cols-2 grid-rows-2 p-10 justify-center items-center gap-10">
                 <p className="text-center text-2xl font-bold self-center flex-grow p-10">

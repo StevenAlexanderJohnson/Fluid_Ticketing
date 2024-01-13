@@ -48,7 +48,7 @@ export default function Dashboard() {
         setChartData(data);
     }, []);
     return (
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-5'>
+        <div className='grid grid-cols-1 md:grid-cols-4 gap-5 p-5'>
             <LightDashboardCell title='Open Tickets' value={2} comparedValue={4} />
             <LightDashboardCell title='Closed Tickets' value={1} comparedValue={1} />
             <LightDashboardCell title='Days until next Sprint' value={1} comparedValue={3} />

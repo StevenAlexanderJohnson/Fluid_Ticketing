@@ -7,16 +7,21 @@ import trending from '../assets/trending.svg';
 import '../App.css'
 import { Outlet } from 'react-router-dom'
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../store/reducers/authSlice';
 
 export default function Home() {
+  const userName: string = useSelector((state: any) => state.auth.user);
+  const dispatch = useDispatch();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-nav gap-4 h-full max-w-7xl mx-auto p-5">
       <div className="hidden bg-background-dark03 dark:bg-background-light03 rounded-xl py-10 px-5 md:flex flex-col gap-10">
-        <div className='flex flex-row justify-around items-center mb-10'>
+        <button className='flex flex-row justify-between items-center hover:backdrop-brightness-75 dark:hover:backdrop-brightness-200 transition-all duration-100 rounded-lg h-12 px-5' onClick={() => dispatch(logout())}>
           <img src={user_icon} alt="user icon" className="w-12 h-auto dark:invert" />
-          <span>User</span>
-        </div>
-        <Link to={'/dashboard'} className='flex flex-row justify-between items-center hover:backdrop-brightness-75 dark:hover:backdrop-brightness-200 transition-all duration-100 rounded-lg h-12 px-5'>
+          <span>{userName.split(' ')[0]}</span>
+        </button>
+        <Link to={'/'} className='flex flex-row justify-between items-center hover:backdrop-brightness-75 dark:hover:backdrop-brightness-200 transition-all duration-100 rounded-lg h-12 px-5'>
           <img src={dashboard} alt="ticket" className="w-10 h-auto dark:invert" />
           <span>Dashboard</span>
         </Link>
