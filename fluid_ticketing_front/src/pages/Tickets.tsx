@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ticket } from '../components/ticket_preview.tsx'
 import TicketPreview from '../components/ticket_preview.tsx';
+import { useSelector } from 'react-redux';
 
 interface asignee_option {
     id: number,
@@ -13,6 +14,8 @@ export default function Tickets() {
     const [assigneeFilter, setAssigneeFilter] = useState('all');
     const [descriptionFilter, setDescriptionFilter] = useState('');
     const [tickets, setTickets] = useState<ticket[]>([])
+
+    const user = useSelector((state: any) => state.auth.user);
 
     useEffect(() => {
         const tickets: ticket[] = [
@@ -75,8 +78,8 @@ export default function Tickets() {
                 <label htmlFor='assignee_filter' className='text-2xl'>
                     Assignee:
                     <select name="assignee_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setAssigneeFilter(e.target.value)}>
-                        <option selected>All</option>
-                        <option>Me</option>
+                        <option value="all">All</option>
+                        <option value={`${user}`}>Me</option>
                         {asigneeOptions.map((option) => <option key={option.id}>{option.name}</option>)}
                     </select>
                 </label>

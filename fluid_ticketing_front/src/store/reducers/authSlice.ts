@@ -10,7 +10,7 @@ interface AuthSliceInterface {
 export const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        user: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
+        user: sessionStorage.getItem('user') ? sessionStorage.getItem('user')! : null,
         token: sessionStorage.getItem('token') ? sessionStorage.getItem('token')! : null,
         refreshToken: sessionStorage.getItem('refreshToken') ? sessionStorage.getItem('refreshToken')! : null,
         isLoggedIn: sessionStorage.getItem('token') ? true : false,
@@ -21,6 +21,9 @@ export const authSlice = createSlice({
             state.token = action.payload.token;
             state.refreshToken = action.payload.refreshToken;
             state.isLoggedIn = true;
+            sessionStorage.setItem('user', action.payload.user);
+            sessionStorage.setItem('token', action.payload.token);
+            sessionStorage.setItem('refreshToken', action.payload.refreshToken);
         },
         logout: (state) => {
             state.user = null;
