@@ -4,24 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@media (prefers-color-scheme: light) {
-  :root {
-    background-color: theme('colors.background.light');
-    color: theme('colors.text.light');
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    background-color: theme('colors.background.dark');
-    color: theme('colors.text.dark');
-  }
-}
-
 :root {
   box-sizing: border-box;
   font-family: 'Belgrano';
   font-weight: 400;
+}
+
+#root {
+  height: 100%;
 }
 
 html, body {

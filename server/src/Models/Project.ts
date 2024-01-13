@@ -1,4 +1,5 @@
-import {BSON} from "mongodb";
+import {BSON, ObjectId} from "mongodb";
+import { Ticket } from "./Ticket.js";
 
 interface ProjectInterface {
     id: string;
@@ -6,36 +7,33 @@ interface ProjectInterface {
     description: string;
     owner: string;
     members: string[];
-    tasks: Task[];
-    status: "To Do" | "In Progress" | "Done";
-    deadline: Date;
-    priority: string;
-    comments: string[];
+    tasks: string[];
+    createdAt: Date;
+    updatedAt: Date;
+    lastUpdatedBy: string;
 }
 
 export class Project implements BSON.Document {
-    public id: string;
+    public _id: ObjectId;
     public name: string;
     public description: string;
     public owner: string;
     public members: string[];
-    public tasks: Task[];
-    public status: string;
-    public deadline: Date;
-    public priority: string;
-    public comments: string[];
+    public tasks: ObjectId[];
+    public createdAt: Date;
+    public updatedAt: Date;
+    public lastUpdatedBy: string;
 
     constructor(data?: ProjectInterface) {
-        this.id = data && data['id'] ? data['id'] : "";
+        this._id = data && data['id'] ? new ObjectId(data['id']) : new ObjectId();
         this.name = data && data['name'] ? data['name'] : "";
         this.description = data && data['description'] ? data['description'] : "";
         this.owner = data && data['owner'] ? data['owner'] : "";
         this.members = data && data['members'] ? data['members'] : [];
-        this.tasks = data && data['tasks'] ? data['tasks'] : [];
-        this.status = data && data['status'] ? data['status'] : "";
-        this.deadline = data && data['deadline'] ? data['deadline'] : new Date();
-        this.priority = data && data['priority'] ? data['priority'] : "";
-        this.comments = data && data['comments'] ? data['comments'] : [];
+        this.tasks = data && data['tasks'] ? data['tasks'].map(x => new ObjectId(x)) : [];
+        this.createdAt = data && data['createdAt'] ? data['createdAt'] : new Date();
+        this.updatedAt = data && data['updatedAt'] ? data['updatedAt'] : new Date();
+        this.lastUpdatedBy = data && data['lastUpdatedBy'] ? data['lastUpdatedBy'] : "";
     }
 }
 
