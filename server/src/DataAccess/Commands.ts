@@ -132,6 +132,15 @@ export async function GetAuthById(id: ObjectId) {
     return await collection.findOne({ _id: id });
 }
 
+export async function CheckEmailExists(email: string) {
+    const collection = await authCollection;
+    const user = await collection.findOne({ email: email });
+    if (user) {
+        return true;
+    }
+    return false;
+}
+
 export async function GetAuthByEmailPass(email: string, password: string) {
     const collection = await authCollection;
     const user = await collection.findOne({ email: email });

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
 import Auth from '../Models/Auth.js';
-import { CreateUserAuth, GetAuthByEmailPass } from '../DataAccess/Commands.js';
+import { CheckEmailExists, CreateUserAuth, GetAuthByEmailPass } from '../DataAccess/Commands.js';
 import { GenerateJWT, RefreshJWT } from '../Services/JWT.js';
 import { ObjectId } from 'mongodb';
 
@@ -10,12 +10,16 @@ const router = Router();
 router.post('/login', async (req, res) => {
     try {
         const authUser = new Auth(req.body);
+        if (!authUser.email || !authUser.password) {
+            return res.status(400).send('Bad Request');
+        }
         const user = await GetAuthByEmailPass(authUser.email, authUser.password);
         if (!user) {
             return res.status(401).send('Invalid Username and Password');
         }
         authUser._id = user._id;
-        res.json(await GenerateJWT(authUser));
+        const { token: access_token, refreshToken } = await GenerateJWT(authUser);
+        res.status(200).send(new Auth({ name: user.name, access_token: access_token, refresh_token: refreshToken}));
     }
     catch (err) {
         console.log(err);
@@ -23,12 +27,19 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/register', async (req, res) => {
+router.post('/signup', async (req, res) => {
     try {
         const authUser = new Auth(req.body);
-        const user = await GetAuthByEmailPass(authUser.email, authUser.password);
+        if (!authUser.email || !authUser.password) {
+            return res.status(400).send('Bad Request');
+        }
+        const user = await CheckEmailExists(authUser.email);
         if (user) {
             return res.status(409).send('User already exists');
+        }
+        if (authUser.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/) === null) {
+            console.log(authUser.password, "invalid password");
+            return res.status(400).send('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number');
         }
         const registerResponse = await CreateUserAuth(authUser);
         if (registerResponse.acknowledged !== true) {

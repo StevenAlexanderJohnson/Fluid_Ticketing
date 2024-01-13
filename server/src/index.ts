@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 // Import the routes from other files.
 import userRoutes from './Routes/UserRoutes.js';
 import authRouter from './Routes/AuthRoutes.js';
@@ -24,6 +25,12 @@ if (!jwtSecret) {
 const app = express();
 const port = 3000;
 
+const corsOptions = {
+    credentials: true,
+    origin: ['http://localhost:5173', 'localhost:5173']
+}
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/api/auth", authRouter);
