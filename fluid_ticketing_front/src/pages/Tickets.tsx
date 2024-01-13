@@ -77,7 +77,7 @@ export default function Tickets() {
                 </label>
                 <label htmlFor='assignee_filter' className='text-2xl'>
                     Assignee:
-                    <select name="assignee_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setAssigneeFilter(e.target.value)}>
+                    <select defaultValue={`${user}`} name="assignee_filter" className='bg-secondary-light dark:bg-secondary-dark text-base rounded-2xl p-3 mx-2' onChange={(e) => setAssigneeFilter(e.target.value)}>
                         <option value="all">All</option>
                         <option value={`${user}`}>Me</option>
                         {asigneeOptions.map((option) => <option key={option.id}>{option.name}</option>)}
