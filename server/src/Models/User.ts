@@ -1,7 +1,7 @@
 import { BSON, ObjectId } from "mongodb";
 
 export interface UserInterface {
-    id?: string;
+    id: string;
     name?: string;
     email?: string;
     phoneNumber?: string;
@@ -10,7 +10,7 @@ export interface UserInterface {
 }
 
 export default class User implements BSON.Document {
-    public _id?: ObjectId;
+    public _id: ObjectId;
     public name?: string;
     public email?: string;
     public phoneNumber?: string;
@@ -19,10 +19,10 @@ export default class User implements BSON.Document {
 
     constructor(data?: UserInterface) {
         this._id = data && data['id'] ? new ObjectId(data['id']) : new ObjectId();
-        this.name = data && data['name'] ? data['name'] : "";
-        this.email = data && data['email'] ? data['email'] : "";
-        this.phoneNumber = data && data['phoneNumber'] ? data['phoneNumber'] : "";
-        this.password = data && data['password'] ? data['password'] : "";
+        this.name = data && data['name'] ? data['name'] : undefined;
+        this.email = data && data['email'] ? data['email'] : undefined;
+        this.phoneNumber = data && data['phoneNumber'] ? data['phoneNumber'] : undefined;
+        this.password = data && data['password'] ? data['password'] : undefined;
         this.role = data && data['role'] ? data['role'] : "user";
     }
 }

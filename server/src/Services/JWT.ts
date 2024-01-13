@@ -8,9 +8,6 @@ if (!jwtSecret) {
     throw new Error('JWT_SECRET is not defined');
 }
 
-export interface CustomRequest extends Request {
-    auth: Auth
-}
 export interface AuthPayload {
     email: string,
     exp: number,
@@ -18,7 +15,6 @@ export interface AuthPayload {
     role: string,
     sub: string,
 }
-
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.header('Authorization');
@@ -39,7 +35,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             }
             const payload = decoded as AuthPayload;
 
-            (req as CustomRequest).auth = new Auth({
+            req.auth = new Auth({
                 email: payload.email,
                 id: payload.sub,
                 role: payload.role,
@@ -62,7 +58,7 @@ export function DecodeJWT(token: string) {
 }
 
 export async function GenerateJWT(payload: Auth) {
-    const token = jwt.sign({sub: payload._id, email: payload.email, role: payload.role}, jwtSecret!, { expiresIn: '1h' });
+    const token = jwt.sign({ sub: payload._id, email: payload.email, role: payload.role }, jwtSecret!, { expiresIn: '1h' });
     const refreshToken = Math.random().toString(36).substring(2);
 
     await UpdateAuthToken(payload._id.toString(), refreshToken);

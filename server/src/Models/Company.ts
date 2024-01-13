@@ -6,6 +6,7 @@ export interface CompanyInterface {
     description: string,
     projects: ObjectId[],
     users: ObjectId[],
+    invitedUsers: ObjectId[],
     createdAt: Date
 }
 
@@ -15,6 +16,7 @@ export class Company implements BSON.Document {
     public description: string;
     public projects: ObjectId[];
     public users: ObjectId[];
+    public invitedUsers: ObjectId[];
     public createdAt: Date;
 
     public constructor(data?: CompanyInterface) {
@@ -23,6 +25,7 @@ export class Company implements BSON.Document {
         this.description = data && data['description'] ? data['description'] : "";
         this.projects = data && data['projects'] ? data['projects'] : [];
         this.users = data && data['users'] ? data['users'] : [];
+        this.invitedUsers = data && data['invitedUsers'] ? data['invitedUsers'] : [];
         this.createdAt = data && data['createdAt'] ? data['createdAt'] : new Date();
     }
 }

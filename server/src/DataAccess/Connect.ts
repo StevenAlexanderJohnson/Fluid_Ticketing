@@ -4,6 +4,7 @@ import User from '../Models/User.js';
 import { Project } from '../Models/Project.js';
 import Auth from '../Models/Auth.js';
 import { Ticket } from '../Models/Ticket.js';
+import { Company } from '../Models/Company.js';
 
 
 async function ConnectToMongo() {
@@ -30,4 +31,5 @@ const userCollection = GetCollection<User>('Auth', 'Users');
 const projectCollection = GetCollection<Project>('ProjectManager', 'Projects');
 const authCollection = GetCollection<Auth>('Auth', 'Users');
 const ticketCollection = GetCollection<Ticket>('ProjectManager', 'Tickets');
-export { userCollection, projectCollection, authCollection, ticketCollection };
+const companyCollection = GetCollection<Company>('ProjectManager', 'Companies');
+export { userCollection, projectCollection, authCollection, ticketCollection, companyCollection };

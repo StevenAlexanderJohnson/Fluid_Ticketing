@@ -19,7 +19,7 @@ router.post('/login', async (req, res) => {
         }
         authUser._id = user._id;
         const { token: access_token, refreshToken } = await GenerateJWT(authUser);
-        res.status(200).send(new Auth({ name: user.name, access_token: access_token, refresh_token: refreshToken}));
+        res.status(200).send({name: user.name, token: access_token, refresh_token: refreshToken});
     }
     catch (err) {
         console.log(err);
@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
 router.post('/signup', async (req, res) => {
     try {
         const authUser = new Auth(req.body);
-        if (!authUser.email || !authUser.password) {
+        if (!authUser.email || !authUser.password || !authUser.name) {
             return res.status(400).send('Bad Request');
         }
         const user = await CheckEmailExists(authUser.email);

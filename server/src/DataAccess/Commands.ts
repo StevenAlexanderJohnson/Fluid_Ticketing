@@ -1,10 +1,11 @@
-import { userCollection, projectCollection, authCollection, ticketCollection } from "./Connect.js";
+import { userCollection, projectCollection, authCollection, ticketCollection, companyCollection } from "./Connect.js";
 import User from '../Models/User.js';
 import { Project } from '../Models/Project.js';
 import { ObjectId } from "mongodb";
 import { HashPassword, ComparePassword } from "../Services/PasswordHasher.js";
 import Auth from "../Models/Auth.js";
 import { Ticket } from "../Models/Ticket.js";
+import { Company } from "../Models/Company.js";
 
 /****************************
  *      User Commands       *
@@ -124,6 +125,47 @@ export async function UpdateTicket(id: string, ticket: Ticket) {
     collection.updateOne(expression, { $set: ticket });
 }
 
+/***************************
+ *     Company Commands    *
+ ***************************/
+export async function GetCompaniesByUserId(id: string) {
+    const collection = await companyCollection;
+    return await collection.find({ users: new ObjectId(id) }).toArray();
+}
+
+export async function GetCompanyById(id: string, userId: string) {
+    const expression = { _id: new ObjectId(id), users: new ObjectId(userId) };
+    const collection = await companyCollection;
+    return await collection.findOne(expression);
+}
+
+export async function CreateCompany(company: Company) {
+    const collection = await companyCollection;
+    return await collection.insertOne(company);
+}
+
+export async function InviteUserToCompany(companyId: string, userId: string) {
+    const collection = await companyCollection;
+    const expression = { _id: new ObjectId(companyId) };
+    const company = await collection.findOne(expression);
+    if (!company) {
+        throw new Error('Company not found');
+    }
+    const users = [...company.invitedUsers, new ObjectId(userId)];
+    await collection.updateOne(expression, { $set: { invitedUsers: users } });
+}
+
+export async function AddUserToCompany(companyId: string, userId: string) {
+    const collection = await companyCollection;
+    const expression = { _id: new ObjectId(companyId) };
+    const company = await collection.findOne(expression);
+    if (!company) {
+        throw new Error('Company not found');
+    }
+    const users = [...company.users, new ObjectId(userId)];
+    await collection.updateOne(expression, { $set: { users: users } });
+}
+
 /****************************
  *      Auth Commands       *
  ****************************/
@@ -148,7 +190,7 @@ export async function GetAuthByEmailPass(email: string, password: string) {
         return null;
     }
 
-    if (!await ComparePassword(password, user.password)) {
+    if (!await ComparePassword(password, user.password!)) {
         return null
     }
     return user;
@@ -156,8 +198,8 @@ export async function GetAuthByEmailPass(email: string, password: string) {
 
 export async function CreateUserAuth(auth: Auth) {
     const collection = await authCollection;
-    const passwordHash = await HashPassword(auth.password);
-    const authUser = new Auth({ ...auth, id: auth._id.toString(), password: passwordHash });
+    const passwordHash = await HashPassword(auth.password!);
+    const authUser = new Auth({ ...auth, id: auth._id!.toString(), password: passwordHash });
     return await collection.insertOne(authUser);
 }
 
