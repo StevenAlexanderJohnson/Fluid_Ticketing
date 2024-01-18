@@ -43,7 +43,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/api/auth", authRouter);
-app.use('/api', companyRouter);
+app.use('/api/company', companyRouter);
 // app.use("/api/user", userRoutes);
 // app.use('/api/project', projectRouter);
 // app.use('/api/ticket', ticketRouter);

@@ -90,7 +90,7 @@ export default function LandingPage() {
                 </div>
                 <div className="p-10">
                     <p className="text-2xl font-bold self-center">
-                        Build with <GradientText text={'NoSQL'} />, the system can mutate to go wherever your needs are.
+                        Built with <GradientText text={'NoSQL'} />, the system can mutate to go wherever your needs are.
                     </p>
                     <p className="text-2xl font-bold self-center">
                         The system is designed to be as flexable as possible, allowing you to create your own tickets and track whatever metric you can think up of.
@@ -101,7 +101,7 @@ export default function LandingPage() {
                 <div className="col-span-3 row-span-1 bg-secondary-light dark:bg-background-light03 rounded-2xl flex justify-center items-center p-5">
                     <GradientText text={'Price Plans'} header />
                 </div>
-                <div className="col-span-1 row-span-3 bg-secondary-light dark:bg-background-light03 rounded-2xl flex justify-center items-center p-5 flex-col gap-10">
+                <div className="md:col-span-1 col-span-3 row-span-3 bg-secondary-light dark:bg-background-light03 rounded-2xl flex justify-center items-center p-5 flex-col gap-10">
                     <GradientText text={'Free'} header />
                     <ul className="flex flex-col gap-5">
                         <li>Unlimited Projects</li>
@@ -110,7 +110,7 @@ export default function LandingPage() {
                         <li>Unlimited Tickets</li>
                     </ul>
                 </div>
-                <div className="col-span-1 row-span-3 bg-secondary-light dark:bg-background-light03 rounded-2xl flex justify-center items-center flex-col gap-10 p-5">
+                <div className=" col-span-3 md:col-span-1 row-span-3 bg-secondary-light dark:bg-background-light03 rounded-2xl flex justify-center items-center flex-col gap-10 p-5">
                     <GradientText text={'Double Free'} header />
                     <ul className="flex flex-col gap-5">
                         <li>Unlimited Projects</li>
@@ -122,7 +122,7 @@ export default function LandingPage() {
                         <li>Custom Ticket Statuses</li>
                     </ul>
                 </div>
-                <div className="col-span-1 row-span-3 bg-secondary-light dark:bg-background-light03 rounded-2xl flex justify-center items-center p-5 flex-col gap-10">
+                <div className="col-span-3 md:col-span-1 row-span-3 bg-secondary-light dark:bg-background-light03 rounded-2xl flex justify-center items-center p-5 flex-col gap-10">
                     <GradientText text={'Triple Free'} header />
                     <ul className="flex flex-col gap-5">
                         <li>Unlimited Projects</li>

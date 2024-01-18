@@ -1,10 +1,11 @@
 import {BSON, ObjectId} from "mongodb";
+import { Project } from "./Project.js";
 
 export interface CompanyInterface {
     id: string,
     name: string,
     description: string,
-    projects: ObjectId[],
+    projects: Project[],
     users: ObjectId[],
     invitedUsers: ObjectId[],
     createdAt: Date
@@ -14,7 +15,7 @@ export class Company implements BSON.Document {
     public _id: ObjectId;
     public name: string;
     public description: string;
-    public projects: ObjectId[];
+    public projects: Project[];
     public users: ObjectId[];
     public invitedUsers: ObjectId[];
     public createdAt: Date;

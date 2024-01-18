@@ -44,7 +44,7 @@ export default function Login() {
                 dispatch(setAuth({
                     user: data.name,
                     token: data.token,
-                    refreshToken: data.access_token,
+                    refreshToken: data.refresh_token,
                 }));
                 navigate('/');
             })

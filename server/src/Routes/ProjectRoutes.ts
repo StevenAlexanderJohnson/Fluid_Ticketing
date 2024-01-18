@@ -6,9 +6,9 @@ import { auth } from '../Services/JWT.js';
 const router = Router();
 router.use(auth);
 
-router.get('/', async (_, res) => {
+router.get('/', async (req, res) => {
     try {
-        const projects = await GetAllProjects();
+        const projects = await GetAllProjects(req.companyId);
         res.json(projects);
     }
     catch (err) {
@@ -18,7 +18,7 @@ router.get('/', async (_, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const project = new Project(req.body);
+    const project = new Project({...req.body, companyId: req.companyId});
     // Make sure that either the id or name is set
     if (!project.name) {
         res.status(400).send('Project must have a name.');

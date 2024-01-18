@@ -1,11 +1,11 @@
 import {BSON, ObjectId} from "mongodb";
-import { Ticket } from "./Ticket.js";
 
 interface ProjectInterface {
     id: string;
     name: string;
     description: string;
     owner: string;
+    companyId: string;
     members: string[];
     tasks: string[];
     createdAt: Date;
@@ -18,6 +18,7 @@ export class Project implements BSON.Document {
     public name: string;
     public description: string;
     public owner: string;
+    public companyId?: ObjectId;
     public members: string[];
     public tasks: ObjectId[];
     public createdAt: Date;
@@ -29,6 +30,8 @@ export class Project implements BSON.Document {
         this.name = data && data['name'] ? data['name'] : "";
         this.description = data && data['description'] ? data['description'] : "";
         this.owner = data && data['owner'] ? data['owner'] : "";
+        // Check to make sure this isn't undefined when creating the object.
+        this.companyId = data && data['companyId'] ? new ObjectId(data['companyId']) : undefined;
         this.members = data && data['members'] ? data['members'] : [];
         this.tasks = data && data['tasks'] ? data['tasks'].map(x => new ObjectId(x)) : [];
         this.createdAt = data && data['createdAt'] ? data['createdAt'] : new Date();

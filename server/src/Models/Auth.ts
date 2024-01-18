@@ -13,7 +13,7 @@ export default class Auth extends User implements BSON.Document {
     public refresh_token: string;
 
     constructor(data?: AuthInterface) {
-        super();
+        super(data);
         this.name = data && data['name'] ? data['name'] : "";
         this.email = data && data['email'] ? data['email'] : "";
         this.password = data && data['password'] ? data['password'] : "";

@@ -17,6 +17,7 @@ export const authSlice = createSlice({
     } as AuthSliceInterface,
     reducers: {
         login: (state, action) => {
+            console.log('login action', action.payload)
             state.user = action.payload.user;
             state.token = action.payload.token;
             state.refreshToken = action.payload.refreshToken;
@@ -26,10 +27,14 @@ export const authSlice = createSlice({
             sessionStorage.setItem('refreshToken', action.payload.refreshToken);
         },
         logout: (state) => {
+            console.log('logout action')
             state.user = null;
             state.token = null;
             state.refreshToken = null;
             state.isLoggedIn = false;
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('refreshToken');
         }
     }
 });

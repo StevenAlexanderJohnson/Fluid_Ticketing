@@ -9,11 +9,11 @@ import ticketRouter from './TicketRoutes.js';
 
 const router = Router({ mergeParams: true });
 router.use(auth);
-router.get('/company', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         // Get User id from JWT
         const userId = req.auth._id;
-
+        console.log("/", userId);
         const company = await GetCompaniesByUserId(userId.toString());
         if (!company) {
             res.status(404).send('Company not found');
@@ -26,19 +26,33 @@ router.get('/company', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+router.post('/', async (req, res) => {
+    try {
+        const company = new Company(req.body);
+        const result = await CreateCompany(company, req.auth._id);
+        res.json(result);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 router.use('/:companyId', async (req, res, next) => {
     try {
-    if (!req.params.companyId) {
-        res.status(400).send('Company id is required');
-        return;
-    }
-    const company = await GetCompanyById(req.params.companyId, req.auth._id.toString());
-    if (!company) {
-        res.status(404).send('Company not found');
-        return;
-    }
-    req.companyId = req.params.companyId;
-    next();
+        console.log('company id:', req.params.companyId);
+        if (!req.params.companyId) {
+            res.status(400).send('Company id is required');
+            return;
+        }
+        const company = await GetCompanyById(req.params.companyId, req.auth._id.toString());
+        if (!company) {
+            res.status(404).send('Company not found');
+            return;
+        }
+        req.companyId = req.params.companyId;
+        next();
     }
     catch (e) {
         console.error(e);
@@ -55,6 +69,7 @@ router.get('/:companyId', async (req, res) => {
             res.status(400).send('Company id is required');
             return;
         }
+        console.log('company id:', req.params.companyId);
         const userId = req.auth._id;
         const company = await GetCompanyById(req.params.companyId, userId.toString());
         if (!company) {
@@ -87,16 +102,5 @@ router.get('/:companyId/', async (req, res) => {
     }
 });
 
-router.post('/:companyId/', async (req, res) => {
-    try {
-        const company = new Company(req.body);
-        const result = await CreateCompany(company);
-        res.json(result);
-    }
-    catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    }
-});
 
 export default router;

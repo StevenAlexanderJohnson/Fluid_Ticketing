@@ -54,9 +54,10 @@ export async function CreateUser(user: User) {
 /****************************
  *     Project Commands     *
  * **************************/
-export async function GetAllProjects() {
+export async function GetAllProjects(companyId: string) {
+    const expression = { companyId: new ObjectId(companyId)}
     const collection = await projectCollection;
-    return collection.find().toArray();
+    return await collection.find({}).project({}).toArray();
 }
 
 export async function GetProjectById(id: string) {
@@ -114,7 +115,7 @@ export async function CreateTicket(ticket: Ticket) {
     const pCollection = await projectCollection;
     let project = await pCollection.findOne(projectExpression);
     // No need to check if project exists becuase we did that in the route.
-    await pCollection.updateOne(projectExpression, { $set: { tasks: [...project!.tasks, new ObjectId(output.insertedId)]} });
+    await pCollection.updateOne(projectExpression, { $set: { tasks: [...project!.tasks, new ObjectId(output.insertedId)] } });
 
     return output;
 }
@@ -139,8 +140,9 @@ export async function GetCompanyById(id: string, userId: string) {
     return await collection.findOne(expression);
 }
 
-export async function CreateCompany(company: Company) {
+export async function CreateCompany(company: Company, userId: ObjectId) {
     const collection = await companyCollection;
+    company.users = [userId];
     return await collection.insertOne(company);
 }
 
