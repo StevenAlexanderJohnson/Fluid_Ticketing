@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const result = await CreateProject(project);
+        const result = await CreateProject(req.companyId, project);
         res.json(result);
     }
     catch (err) {
@@ -39,7 +39,7 @@ router.get('/:id', async (req, res) => {
     const projectId = req.params.id;
 
     try {
-        const result = await GetProjectById(projectId);
+        const result = await GetProjectById(req.companyId, projectId);
         if (!result) {
             res.status(404).send('Project not found');
             return;
@@ -54,10 +54,10 @@ router.get('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
     const projectId = req.params.id;
-    const project = new Project(req.body);
+    const project = new Project({id: req.params.id, ...req.body});
 
     try {
-        const result = await UpdateProject(projectId, project);
+        const result = await UpdateProject(req.companyId, projectId, project);
         res.json(result);
     }
     catch (err) {

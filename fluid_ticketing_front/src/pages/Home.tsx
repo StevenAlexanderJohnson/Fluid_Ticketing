@@ -17,15 +17,23 @@ export default function Home() {
   const company: Company = useSelector((state: any) => state.company.companyData);
   const { companyId } = useParams();
   const projectRef = useRef<HTMLSelectElement>(null);
+  const navigate = useNavigate();
 
-  let projects = [];
-  if (company) {
-    projects = company.projects.map((project: Project) => (
-      <option key={project._id.toString()} value={project._id.toString()} className="flex flex-row justify-between items-center hover:backdrop-brightness-75 dark:hover:backdrop-brightness-200 transition-all duration-100 rounded-lg h-12 px-5">
-        <img src={ticket} alt="ticket" className="w-10 h-auto dark:invert" />
-        <span>{project.name}</span>
+  // If the company isn't set return an empty array else return the mapped projects.
+  const projects = !company ? [] : company.projects.map((project: Project) => (
+      <option key={project._id.toString()} value={project._id.toString()} className="hover:backdrop-brightness-75 dark:hover:backdrop-brightness-200 transition-all duration-100 rounded-lg h-12 px-5">
+        {project.name}
       </option>
     ));
+
+  function switchProject(event: React.ChangeEvent<HTMLSelectElement>) {
+    const id = event.target.value;
+    if (id === '-1') {
+      navigate(`/${companyId}`)
+      return;
+    }
+
+    navigate(`/${companyId}/${id}`)
   }
 
   return (
@@ -39,11 +47,11 @@ export default function Home() {
           <>
             <div>
               <label htmlFor="project-list" className="text-lg">Projects</label>
-              <select ref={projectRef} name="project-list" id="project-list" className='flex flex-row justify-between items-center hover:backdrop-brightness-75 dark:hover:backdrop-brightness-200 transition-all duration-100 rounded-lg h-12 px-5'>
+              <select ref={projectRef} onChange={switchProject} name="project-list" id="project-list" className='flex flex-row justify-between items-center hover:backdrop-brightness-75 dark:hover:backdrop-brightness-200 transition-all duration-100 rounded-lg h-12 px-5'>
                 <option value='-1'>
-                  Select a Project
+                  Company View
                 </option>
-                {/* {projects} */}
+                {projects}
                 <option value='-2'>
                   Create a Project
                 </option>

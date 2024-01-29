@@ -41,7 +41,6 @@ router.post('/', async (req, res) => {
 
 router.use('/:companyId', async (req, res, next) => {
     try {
-        console.log('company id:', req.params.companyId);
         if (!req.params.companyId) {
             res.status(400).send('Company id is required');
             return;
@@ -69,27 +68,8 @@ router.get('/:companyId', async (req, res) => {
             res.status(400).send('Company id is required');
             return;
         }
-        console.log('company id:', req.params.companyId);
         const userId = req.auth._id;
         const company = await GetCompanyById(req.params.companyId, userId.toString());
-        if (!company) {
-            res.status(404).send('Company not found');
-            return;
-        }
-        res.json(company);
-    }
-    catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-router.get('/:companyId/', async (req, res) => {
-    try {
-        // Get User id from JWT
-        const userId = req.auth._id;
-
-        const company = await GetCompaniesByUserId(userId.toString());
         if (!company) {
             res.status(404).send('Company not found');
             return;

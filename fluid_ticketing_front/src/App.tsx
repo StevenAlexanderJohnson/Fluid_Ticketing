@@ -2,7 +2,6 @@ import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
-  useNavigate
 } from 'react-router-dom';
 import './App.css'
 import Home from './pages/Home';
@@ -14,6 +13,7 @@ import CompanySelect from './pages/CompanySelect';
 import { setCompany } from './store/reducers/companySlice';
 import Logout from './pages/Logout';
 import CompanyDashboard from './pages/CompanyDashboard';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const authenticated = useSelector((state: any) => state.auth.isLoggedIn);
@@ -46,6 +46,10 @@ function App() {
           {
             path: '',
             element: <CompanyDashboard />
+          },
+          {
+            path: ':ticketId',
+            element: <Dashboard />
           },
           {
             path: 'tickets',

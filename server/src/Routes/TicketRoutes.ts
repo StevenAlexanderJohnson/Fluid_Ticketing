@@ -6,9 +6,14 @@ import { auth } from '../Services/JWT.js';
 const router = Router();
 router.use(auth);
 
-router.get('/', async (_, res) => {
+type ticketRequestBody = {
+    companyId: string
+}
+router.get('/', async (req, res) => {
     try {
-        const tickets = await GetAllTickets();
+        const params = req.query as ticketRequestBody;
+        console.log(params);
+        const tickets = await GetAllTickets(params.companyId);
         res.json(tickets);
     }
     catch (err) {
@@ -31,7 +36,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const project = await GetProjectById(ticket.projectId.toString());
+        const project = await GetProjectById(req.companyId, ticket.projectId.toString());
         if (!project) {
             res.status(404).send('Project not found');
             return;
