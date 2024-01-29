@@ -55,42 +55,67 @@ export async function CreateUser(user: User) {
  *     Project Commands     *
  * **************************/
 export async function GetAllProjects(companyId: string) {
-    const expression = { companyId: new ObjectId(companyId)}
-    const collection = await projectCollection;
-    return await collection.find({}).project({}).toArray();
+    const collection = await companyCollection;
+    const output = await collection.findOne<Company>(
+        { _id: new ObjectId(companyId) },
+        { projection: { projects: 1, _id: 0 } }
+    );
+
+    return output ? output.projects : [];
 }
 
-export async function GetProjectById(id: string) {
+export async function GetProjectById(companyId: string, id: string) {
     let expression = {};
-    const collection = await projectCollection;
+    const collection = await companyCollection;
 
     try {
-        expression = { _id: new ObjectId(id) };
+        expression = { _id: new ObjectId(companyId), 'projects._id': new ObjectId(id) };
     }
     catch (err) {
-        expression = { name: id };
+        expression = { _id: new ObjectId(companyId), 'projects.name': id };
     }
 
-    return await collection.findOne(expression);
+    const output = await collection.findOne(expression, { projection: { "projects.$": 1, _id: 0 } })
+
+    return output && output.projects ? output.projects[0] : {};
 }
 
-export async function CreateProject(project: Project) {
-    const collection = await projectCollection;
-    return await collection.insertOne(project);
+export async function CreateProject(companyId: string, project: Project) {
+    const collection = await companyCollection;
+    return await collection.updateOne({ _id: new ObjectId(companyId) }, {
+        $push: {
+            "projects": project
+        }
+    });
 }
 
-export async function UpdateProject(id: string, project: Project) {
-    const expression = { _id: new ObjectId(id) };
-    const collection = await projectCollection;
-    return await collection.updateOne(expression, { $set: project });
+export async function UpdateProject(companyId: string, id: string, project: Project) {
+    const collection = await companyCollection;
+    const expression = { _id: new ObjectId(companyId), 'projects._id': new ObjectId(id) };
+
+    return await collection.updateOne(expression, { $set: { 'projects.$': project } })
 }
 
 /****************************
  *      Ticket Commands     *
  ****************************/
-export async function GetAllTickets() {
+export async function GetAllTickets(companyId: string) {
     const collection = await ticketCollection;
-    return collection.find().toArray();
+    const testing = (await companyCollection).aggregate([
+        { $match: { _id: companyId } },
+        { $unwind: "$projects" },
+        {
+            $lookup: {
+                localField: "projects._id",
+                foreignField: "projectId",
+                as: "tickets"
+            }
+        },
+        { $unwind: "$tickets" },
+        { $replaceRoot: { newRoot: "$tickets" } }
+    ]).toArray();
+    console.log(testing);
+    return collection.find({}).toArray();
 }
 
 export async function GetTicketById(id: string) {
