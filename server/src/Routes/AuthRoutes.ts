@@ -19,6 +19,7 @@ router.post('/login', async (req, res) => {
         }
         authUser._id = user._id;
         const { token: access_token, refreshToken } = await GenerateJWT(authUser);
+        res.setHeader('Set-Cookie', [`refreshToken=${refreshToken}; HttpOnly; Secure; Path=/; Max-Age=${60 * 60 * 24 * 30}`]);// 30 days
         res.status(200).send({name: user.name, token: access_token, refresh_token: refreshToken});
     }
     catch (err) {
@@ -82,7 +83,7 @@ router.post(
                 return res.status(401).send('Unauthorized');
             }
 
-            res.header('Set-Cookie', [`refreshToken=${token.refreshToken}; HttpOnly; Secure; Path=/; Max-Age=${60 * 60 * 24 * 30}`])// 30 days
+            res.setHeader('Set-Cookie', [`refreshToken=${token.refreshToken}; HttpOnly; Secure; Path=/; Max-Age=${60 * 60 * 24 * 30}`])// 30 days
                 .json({ token: token.token, redirect: redirect });
         }
         catch (err) {

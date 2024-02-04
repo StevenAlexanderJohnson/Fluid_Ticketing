@@ -19,20 +19,17 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.header('Authorization');
         if (!authHeader) {
-            console.log('no auth header');
             res.status(401).send('Unauthorized');
             return;
         }
         const token = authHeader!.replace('Bearer ', '');
         if (!token) {
-            console.log('no token');
             res.status(401).send('Unauthorized');
             return;
         }
 
         jwt.verify(token!, jwtSecret, function (err, decoded) {
             if (!decoded) {
-                console.log('no decoded')
                 res.status(401).send('Unauthorized').end();
                 return;
             }
