@@ -24,6 +24,7 @@ declare global {
     namespace Express {
         export interface Request {
             companyId: string;
+            projectId: string;
             auth: Auth;
         }
     }

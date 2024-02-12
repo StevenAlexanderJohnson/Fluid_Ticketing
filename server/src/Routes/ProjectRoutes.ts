@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { GetAllProjects, CreateProject, GetProjectById, UpdateProject } from '../DataAccess/Commands.js';
 import { Project } from '../Models/Project.js';
 import { auth } from '../Services/JWT.js';
+import ticketRouter from '../Routes/TicketRoutes.js';
 
 const router = Router();
 router.use(auth);
@@ -35,6 +36,21 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.use('/:projectId', async (req, res, next) => {
+    try {
+        if (!req.params.projectId) {
+            res.status(400).send('Project Id is required');
+            return;
+        }
+        req.projectId = req.params.projectId;
+        next();
+    }
+    catch (e) {
+        console.error(e)
+        res.status(500);
+    }
+});
+
 router.get('/:id', async (req, res) => {
     const projectId = req.params.id;
 
@@ -65,5 +81,7 @@ router.patch('/:id', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+router.use('/:id/ticket', ticketRouter);
 
 export default router;

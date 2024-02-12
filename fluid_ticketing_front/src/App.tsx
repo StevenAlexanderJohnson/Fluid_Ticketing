@@ -14,6 +14,8 @@ import { setCompany } from './store/reducers/companySlice';
 import Logout from './pages/Logout';
 import CompanyDashboard from './pages/CompanyDashboard';
 import Dashboard from './pages/Dashboard';
+import { setProject } from './store/reducers/projectSlice';
+import { setTickets } from './store/reducers/ticketSlice';
 
 function App() {
   const authenticated = useSelector((state: any) => state.auth.isLoggedIn);
@@ -24,7 +26,7 @@ function App() {
       {
         path: '/:companyId',
         loader: async ({ params }: { params: any }) => {
-          const resposne = await fetch(
+          const response = await fetch(
             `http://localhost:3000/api/company/${params.companyId}`,
             {
               headers: {
@@ -32,11 +34,11 @@ function App() {
               }
             }
           );
-          if (!resposne.ok) {
-            throw new Error(resposne.statusText);
+          if (!response.ok) {
+            throw new Error(response.statusText);
           }
 
-          const data = await resposne.json();
+          const data = await response.json();
           dispatch(setCompany(data));
 
           return null;
@@ -48,7 +50,24 @@ function App() {
             element: <CompanyDashboard />
           },
           {
-            path: ':ticketId',
+            path: ':projectId',
+            loader: async ({params}: {params: any}) => {
+              const response = await fetch(
+                `http://localhost:3000/api/company/${params.companyId}/project/${params.projectId}/ticket`,
+                {
+                  headers: {
+                    'authorization': `Bearer ${auth_token}`
+                  }
+                }
+              );
+              if (!response.ok) {
+                throw new Error(response.statusText);
+              }
+
+              const data = await response.json();
+              dispatch(setTickets(data));
+              return null;
+            },
             element: <Dashboard />
           },
           {

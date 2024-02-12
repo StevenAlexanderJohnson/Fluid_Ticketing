@@ -99,23 +99,40 @@ export async function UpdateProject(companyId: string, id: string, project: Proj
 /****************************
  *      Ticket Commands     *
  ****************************/
-export async function GetAllTickets(companyId: string) {
-    const collection = await ticketCollection;
-    const testing = (await companyCollection).aggregate([
-        { $match: { _id: companyId } },
-        { $unwind: "$projects" },
+export async function GetAllCompanyTickets(companyId: string) {
+    const collection = await companyCollection;
+    const output = await collection.aggregate([
         {
-            $lookup: {
-                localField: "projects._id",
-                foreignField: "projectId",
-                as: "tickets"
+            '$match': {
+                '_id': new ObjectId('65a3169e319d1b61c8c3d305')
             }
-        },
-        { $unwind: "$tickets" },
-        { $replaceRoot: { newRoot: "$tickets" } }
+        }, {
+            '$unwind': {
+                'path': '$projects'
+            }
+        }, {
+            '$lookup': {
+                'from': 'Tickets',
+                'localField': 'projects._id',
+                'foreignField': 'projectId',
+                'as': 'output'
+            }
+        }, {
+            '$unwind': {
+                'path': '$output'
+            }
+        }, {
+            '$replaceRoot': {
+                'newRoot': '$output'
+            }
+        }
     ]).toArray();
-    console.log(testing);
-    return collection.find({}).toArray();
+    return output;
+}
+
+export async function GetAllProjectTickets(projectId: string) {
+    const collection = await ticketCollection;
+    return await collection.find({ projectId: new ObjectId(projectId) }).toArray();
 }
 
 export async function GetTicketById(id: string) {

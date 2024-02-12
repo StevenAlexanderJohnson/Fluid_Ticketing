@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Company } from "../Models/Company.js";
 import { auth } from "../Services/JWT.js";
-import { CreateCompany, GetCompaniesByUserId, GetCompanyById } from "../DataAccess/Commands.js";
+import { CreateCompany, GetAllCompanyTickets, GetCompaniesByUserId, GetCompanyById } from "../DataAccess/Commands.js";
 
 import userRoutes from './UserRoutes.js';
 import projectRouter from './ProjectRoutes.js';
@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
     try {
         // Get User id from JWT
         const userId = req.auth._id;
-        console.log("/", userId);
         const company = await GetCompaniesByUserId(userId.toString());
         if (!company) {
             res.status(404).send('Company not found');
@@ -60,7 +59,17 @@ router.use('/:companyId', async (req, res, next) => {
 });
 router.use('/:companyId/user', userRoutes);
 router.use('/:companyId/project', projectRouter);
-router.use('/:companyId/ticket', ticketRouter);
+router.use('/:companyId/ticket', async (req, res) => {
+    try {
+        console.log(req.params.companyId);
+        const tickets = await GetAllCompanyTickets(req.params.companyId);
+        res.json(tickets);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 router.get('/:companyId', async (req, res) => {
     try {

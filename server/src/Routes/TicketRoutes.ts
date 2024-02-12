@@ -1,19 +1,21 @@
 import { Router } from 'express';
-import { GetAllTickets, CreateTicket, GetTicketById, UpdateTicket, GetProjectById } from '../DataAccess/Commands.js';
+import {
+    GetAllProjectTickets,
+    CreateTicket,
+    GetTicketById,
+    UpdateTicket,
+    GetProjectById
+} from '../DataAccess/Commands.js';
 import { Ticket } from '../Models/Ticket.js';
 import { auth } from '../Services/JWT.js';
 
 const router = Router();
 router.use(auth);
 
-type ticketRequestBody = {
-    companyId: string
-}
 router.get('/', async (req, res) => {
     try {
-        const params = req.query as ticketRequestBody;
-        console.log(params);
-        const tickets = await GetAllTickets(params.companyId);
+        console.log(req.projectId);
+        const tickets = await GetAllProjectTickets(req.projectId);
         res.json(tickets);
     }
     catch (err) {
@@ -52,9 +54,8 @@ router.post('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const ticketId = req.params.id;
-
     try {
-        const result = await GetTicketById(ticketId);
+        let result = await GetTicketById(ticketId);
         if (!result) {
             res.status(404).send('Ticket not found');
             return;
